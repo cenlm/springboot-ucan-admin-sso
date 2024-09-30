@@ -1,4 +1,4 @@
-# ucan-admin
+# springboot-ucan-admin-sso
 
 ### 项目简介
 
@@ -20,7 +20,9 @@ SpringBoot + Shiro + JWT + Mysql + Redis + LayUi（及LayUi第三方插件） + 
 
 ![Image text](https://gitee.com/mrcen/springboot-ucan-admin-sso/raw/master/sso-server/src/main/resources/static/imgs/sso-login.png)<br>
 
+**SSO单点登录逻辑参考：**<br>
 
+[聊聊阿里淘宝SSO跨域登录过程](https://youngzhang08.github.io/2018/08/08/%E8%81%8A%E8%81%8A%E9%98%BF%E9%87%8C%E6%B7%98%E5%AE%9DSSO%E8%B7%A8%E5%9F%9F%E7%99%BB%E5%BD%95%E8%BF%87%E7%A8%8B/)<br>
 
 ### 数据库表关系图
 
@@ -65,20 +67,22 @@ mutex_roles: 互斥角色表<br>
 2. 安装Mysql数据库，并新建ucan_admin数据库，运行项目中的ucan_admin.sql文件。
 3. 将项目导入你自己的开发工具 eclipse中。
 4. 分别修改app-1、app-2、sso-server 的 src/main/resources 目录下的application-dev.yml 文件中的用户名、密码、端口号为你所使用的数据库连接信息。
-5. 在相应的主机上进行DNS域名解析配置，如：app-1、app-2、sso-server直接在当前windows系统上运行，那么就去修改 C:\Windows\System32\drivers\etc目录下的hosts文件：
+5. 在相应的主机上进行DNS域名解析配置，如：app-1、app-2、sso-server直接在当前windows系统上运行，那么就去 C:\Windows\System32\drivers\etc目录下的hosts文件新增以下内容：
 
-127.0.0.1 localhost
-127.0.0.1 ucan.com
-127.0.0.1 www.ucan.com
-127.0.0.1 login.ucan.com
-127.0.0.1 umall.com
-127.0.0.1 www.umall.com
+127.0.0.1 localhost<br>
+127.0.0.1 ucan.com<br>
+127.0.0.1 www.ucan.com<br>
+127.0.0.1 login.ucan.com<br>
+127.0.0.1 umall.com<br>
+127.0.0.1 www.umall.com<br>
 
-然后 cmd 窗口执行：ipconfig /flushdns 
+然后 cmd 窗口执行：ipconfig /flushdns <br>
+
+（linux系统，修改 /etc/hosts文件）
 
 6. 安装 Redis。
 7. 分别在app-1、app-2、sso-server 的 src/main/resources 目录下的application.yml 配置 Redis服务地址/域名、端口号，以及app-1、app-2的SSO系统的相关调用服务地址配置。
-8. 启动 sso-server、app-1、app-2 项目，其端口号分别为：80/8080/8082
+8. 启动 sso-server、app-1、app-2 项目，其端口号分别为：80/8080/8082。（你也可以将app-1/app-2/sso系统分别放在不同的主机上运行，直接使用80端口）
 
 说明：如果sso-server、app-1、app-2 在同一台主机上运行，则可以跳过步骤7 ，否则请根据你的实际情况进行mysql、redis、DNS的配置。
 
@@ -101,20 +105,18 @@ g. 最后通过shiro标签或注解进行资源访问权限控制。<br>
 
 **1. 登录模块**<br>
 
-    注：假设存在 app1、app2、sso认证系统
-
 1.1 用户在任何子系统进行登录/未认证被拦截时，都会跳转到SSO系统的登录页面；<br>
 1.2 用户访问app1任何存在的url（除了/logout），如果app2已经成功登录，那么用户会直接跳转到app1的 index 页面；<br>
 1.3 账号登录失败次数限制：<br>
-    &nbsp;&nbsp;用户连续登录失败次数小于5期间，如果有一次登录成功，那么该用户登录失败次数、限制登录时长将清零；<br>
-    &nbsp;&nbsp;用户连续5次登录失败时，提示"15分钟后再进行登录操作"，并开始记录限制登录时长15分钟；<br>
-    &nbsp;&nbsp;用户连续10次登录失败时，提示"45分钟后再进行登录操作"，此时限制登录时长更新为45分钟；<br>
-    &nbsp;&nbsp;用户连续15次登录失败时，提示"连续 15 次登录失败，再次尝试会被限制登录！"，限制登录时长为45分钟；<br>
-     &nbsp;&nbsp;用户第16次登录失败时，提示"连续 16 次登录失败，该账号已被限制登录，请联系管理员！"，登录被拦截，后端对该用户的账号信息查询被终止；<br>
-    &nbsp;&nbsp;在限制登录时段内，即使用户输入了正确的用户名、密码，依旧限制用户登录操作；过了限制登录时段，用户登录失败次数、限制登录时长自动清零，用户可以再次进行登录操作；<br>
-    &nbsp;&nbsp; 用户登录失败次数小于15次时，如果用户有一次登录成功了，那么系统会清除该用户登录失败信息记录；<br>
-    &nbsp;&nbsp; 管理员可以从后台页面手动解除用户的登录限制；<br>
-    &nbsp;&nbsp;用户登录成功，系统自动完成用户授权，进行资源访问控制。
+    a.&nbsp;&nbsp;用户连续登录失败次数小于5期间，如果有一次登录成功，那么该用户登录失败次数、限制登录时长将清零；<br>
+    b.&nbsp;&nbsp;用户连续5次登录失败时，提示"15分钟后再进行登录操作"，并开始记录限制登录时长15分钟；<br>
+    c.&nbsp;&nbsp;用户连续10次登录失败时，提示"45分钟后再进行登录操作"，此时限制登录时长更新为45分钟；<br>
+    d.&nbsp;&nbsp;用户连续15次登录失败时，提示"连续 15 次登录失败，再次尝试会被限制登录！"，限制登录时长为45分钟；<br>
+     e.&nbsp;&nbsp;用户第16次登录失败时，提示"连续 16 次登录失败，该账号已被限制登录，请联系管理员！"，登录被拦截，后端对该用户的账号信息查询被终止；<br>
+    f.&nbsp;&nbsp;在限制登录时段内，即使用户输入了正确的用户名、密码，依旧限制用户登录操作；过了限制登录时段，用户登录失败次数、限制登录时长自动清零，用户可以再次进行登录操作；<br>
+    g.&nbsp;&nbsp; 用户登录失败次数小于15次时，如果用户有一次登录成功了，那么系统会清除该用户登录失败信息记录；<br>
+    h.&nbsp;&nbsp; 管理员可以从后台页面手动解除用户的登录限制；<br>
+    i.&nbsp;&nbsp;用户登录成功，系统自动完成用户授权，进行资源访问控制。
 
 **2. 仪表盘**<br>
 
@@ -141,10 +143,6 @@ g. 最后通过shiro标签或注解进行资源访问权限控制。<br>
 权限基本信息的CURD，删除权限时会自动解除<角色-权限>映射关系。<br>
 
 ---
-**SSO单点登录逻辑参考：**<br>
-
-[https://youngzhang08.github.io/2018/08/08/%E8%81%8A%E8%81%8A%E9%98%BF%E9%87%8C%E6%B7%98%E5%AE%9DSSO%E8%B7%A8%E5%9F%9F%E7%99%BB%E5%BD%95%E8%BF%87%E7%A8%8B/](https://youngzhang08.github.io/2018/08/08/%E8%81%8A%E8%81%8A%E9%98%BF%E9%87%8C%E6%B7%98%E5%AE%9DSSO%E8%B7%A8%E5%9F%9F%E7%99%BB%E5%BD%95%E8%BF%87%E7%A8%8B/)<br>
-
 
 **RBAC业务逻辑参考：**<br>
 
