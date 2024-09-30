@@ -1,19 +1,19 @@
 # springboot-ucan-admin-sso
 
-### 项目简介
+### 项目概述
 
-该项目是基于 Shiro + JWT令牌 实现的SSO系统。<br>
-系统使用 Shiro进行用户认证与授权管理，JWT令牌作为用户登录凭证，使用Redis作为Shiro管理的session以及JWT 的RefreshTokenCookie的存储介质，<br>
+该项目是基于 Springboot + Shiro + JWT令牌 实现的SSO系统。<br>
+系统使用 Shiro进行用户认证与授权管理，JWT令牌作为用户登录凭证，使用Redis作为Shiro管理的session以及JWT 的RefreshToken的存储介质，<br>
 实现了用户单点登录认证（主要功能）与授权的基本功能。
 技术栈:<br>
-SpringBoot + Shiro + JWT + Mysql + Redis + LayUi（及LayUi第三方插件） + FreeMarker<br>
+SpringBoot + Shiro + JWT + Mysql + Redis + LayUi（及LayUi第三方插件） + FreeMarker等<br>
 
 **功能简介**<br>
 1.用户登录认证、授权、Session管理、JWT凭证的生成、认证和刷新<br>
 2.组织结构管理、职位管理、用户管理、组织分配。<br>
 3.角色管理：<br>
 	3.1 角色基本信息管理。<br>
-	3.2 角色分层、角色互斥、角色权限继承、角色分配、权限分配、角色用户数限制（待办）等。<br>
+	3.2 角色分层、角色互斥、角色权限继承、角色分配、权限分配等功能。<br>
 4.权限管理。<br>
 
 ### 单点登录原理流程图
@@ -23,72 +23,6 @@ SpringBoot + Shiro + JWT + Mysql + Redis + LayUi（及LayUi第三方插件） + 
 **SSO单点登录逻辑参考：**<br>
 
 [聊聊阿里淘宝SSO跨域登录过程](https://youngzhang08.github.io/2018/08/08/%E8%81%8A%E8%81%8A%E9%98%BF%E9%87%8C%E6%B7%98%E5%AE%9DSSO%E8%B7%A8%E5%9F%9F%E7%99%BB%E5%BD%95%E8%BF%87%E7%A8%8B/)<br>
-
-### 数据库表关系图
-
-**1.数据库表关系图：**<br>
-![Image text](https://gitee.com/mrcen/ucan-admin/raw/master/src/main/webapp/imgs/db-erd.png)<br>
-
-**注：**上图只展示了主要的关联字段，详细表字段，请查看src\main\resources\static\database目录的ucan_admin.sql文件<br>
-
-**表名称说明：**<br>
-
-users: 用户表<br>
-organization: 组织表（有上下级关系）<br>
-post: 职位表（有上下级关系）<br>
-roles: 角色表（有上下级关系）<br>
-permissions: 权限表（有上下级关系）<br>
-user_organization: <用户-组织>关系表<br>
-user_post: <用户-职位>关系表<br>
-role_organization: <角色-组织>关系表<br>
-role_post: <角色-职位>关系表<br>
-role_permission: <角色-权限>关系表<br>
-mutex_roles: 互斥角色表<br>
-
-**注：**所有数据表仅在代码逻辑上做了外键约束，数据表结构未添加外键约束，可自行在数据表添加外键约束（如需要）。<br>
-
-
-### 运行环境
-
-1.  JDK 1.8+
-2.  Tomcat-8.5.63
-3.  SpringBoot2.7.9
-4.  Mybatis-3.5.9
-5.  shiro-core 1.10.1
-6.  Redis
-7.  Mysql 5.7.33
-8.  Layui 2.7.6
-9.  Maven
-10. JWT
-
-**项目安装、运行步骤**
-
-1. 在本地准备好Java 8运行环境以及Tomcat。
-2. 安装Mysql数据库，并新建ucan_admin数据库，运行项目中的ucan_admin.sql文件。
-3. 将项目导入你自己的开发工具 eclipse中。
-4. 分别修改app-1、app-2、sso-server 的 src/main/resources 目录下的application-dev.yml 文件中的用户名、密码、端口号为你所使用的数据库连接信息。
-5. 在相应的主机上进行DNS域名解析配置，如：app-1、app-2、sso-server直接在当前windows系统上运行，那么就去 C:\Windows\System32\drivers\etc目录下的hosts文件新增以下内容：
-
-127.0.0.1 localhost<br>
-127.0.0.1 ucan.com<br>
-127.0.0.1 www.ucan.com<br>
-127.0.0.1 login.ucan.com<br>
-127.0.0.1 umall.com<br>
-127.0.0.1 www.umall.com<br>
-
-然后 cmd 窗口执行：ipconfig /flushdns <br>
-
-（linux系统，修改 /etc/hosts文件）
-
-6. 安装 Redis。
-7. 分别在app-1、app-2、sso-server 的 src/main/resources 目录下的application.yml 配置 Redis服务地址/域名、端口号，以及app-1、app-2的SSO系统的相关调用服务地址配置。
-8. 启动 sso-server、app-1、app-2 项目，其端口号分别为：80/8080/8082。（你也可以将app-1/app-2/sso系统分别放在不同的主机上运行，直接使用80端口）
-
-说明：如果sso-server、app-1、app-2 在同一台主机上运行，则可以跳过步骤7 ，否则请根据你的实际情况进行mysql、redis、DNS的配置。
-
-用户名：admin  密码：123456<br>
-用户名：小王  密码：123456<br>
-
 
 ### 功能描述
 
@@ -138,9 +72,90 @@ g. 最后通过shiro标签或注解进行资源访问权限控制。<br>
 &nbsp;&nbsp;b. 将角色分配给组织、职位，从而间接达到为用户分配权限的目的。<br>
 &nbsp;&nbsp;c. 互斥角色管理：例如，会计和财务审核员不能同时分配给给某一个员工，这也意味着将角色分配给组织和职位的时候，系统会自动检查已勾选的组织、职位已分配的角色与待分配的角色之间是否存在互斥关系，如果存在，则不允许此次角色分配，需要按提示进行相应角色关系处理。<br>
 
-
 **5. 权限管理**<br>
 权限基本信息的CURD，删除权限时会自动解除<角色-权限>映射关系。<br>
+
+### 运行环境
+
+1.  JDK 1.8+
+2.  Tomcat-8.5.63
+3.  SpringBoot2.7.9
+4.  Mybatis-3.5.9
+5.  shiro-core 1.10.1
+6.  Redis
+7.  Mysql 5.7.33
+8.  Layui 2.7.6
+9.  Maven
+10. JWT
+
+**项目安装、运行步骤**
+
+1. 在本地准备好Java 8运行环境以及Tomcat。
+2. 安装Mysql数据库，并新建ucan_admin数据库，运行项目中的ucan_admin.sql文件。
+3. 将项目导入你自己的开发工具 eclipse中。
+4. 分别修改app-1、app-2、sso-server 的 src/main/resources 目录下的application-dev.yml 文件中的用户名、密码、端口号为你所使用的数据库连接信息。
+5. 在相应的主机上进行DNS域名解析配置，如：app-1、app-2、sso-server直接在当前windows系统上运行，那么就去 C:\Windows\System32\drivers\etc目录下的hosts文件新增以下内容：
+
+127.0.0.1 localhost<br>
+127.0.0.1 ucan.com<br>
+127.0.0.1 www.ucan.com<br>
+127.0.0.1 login.ucan.com<br>
+127.0.0.1 umall.com<br>
+127.0.0.1 www.umall.com<br>
+
+然后 cmd 窗口执行：ipconfig /flushdns <br>
+
+（linux系统，修改 /etc/hosts文件）
+
+6. 安装 Redis。
+7. 分别在app-1、app-2、sso-server 的 src/main/resources 目录下的application.yml 配置 Redis服务地址/域名、端口号，以及app-1、app-2的SSO系统的相关调用服务地址配置。
+8. sso-server、app-1、app-2 项目，其端口号分别为：80/8080/8082。（你也可以将app-1/app-2/sso系统分别放在不同的主机上运行，直接使用80端口）
+
+说明：如果sso-server、app-1、app-2 在同一台主机上运行，则可以跳过步骤7 ，否则请根据你的实际情况进行mysql、redis、DNS的配置。
+
+
+**项目运行测试**
+
+确认配置信息无误后，分别启动 app-1、app-2、sso系统 ，然后在同一浏览器中输入以下地址：
+http://ucan.com:8080/toLogin<br>
+http://ucan.com:8080/index<br>
+http://umall.com:8082/toLogin<br>
+http://umall.com:8082/index<br>
+
+以测试各种不同登录状态下运行效果。
+
+用户名：admin  密码：123456<br>
+用户名：小王  密码：123456<br>
+
+### 数据库表关系图
+
+**1.数据库表关系图：**<br>
+![Image text](https://gitee.com/mrcen/ucan-admin/raw/master/src/main/webapp/imgs/db-erd.png)<br>
+
+**注：**上图只展示了主要的关联字段，详细表字段，请查看src\main\resources\static\database目录的ucan_admin.sql文件<br>
+
+**表名称说明：**<br>
+
+users: 用户表<br>
+organization: 组织表（有上下级关系）<br>
+post: 职位表（有上下级关系）<br>
+roles: 角色表（有上下级关系）<br>
+permissions: 权限表（有上下级关系）<br>
+user_organization: <用户-组织>关系表<br>
+user_post: <用户-职位>关系表<br>
+role_organization: <角色-组织>关系表<br>
+role_post: <角色-职位>关系表<br>
+role_permission: <角色-权限>关系表<br>
+mutex_roles: 互斥角色表<br>
+
+**注：**所有数据表仅在代码逻辑上做了外键约束，数据表结构未添加外键约束，可自行在数据表添加外键约束（如需要）。<br>
+
+
+
+
+
+
+
 
 ---
 
