@@ -1,0 +1,80 @@
+server:
+  servlet:
+    context-path: /
+    encoding:
+      charset: UTF-8
+      force: true
+      
+
+spring:
+  application:
+    name: ucan-sso
+  profiles:
+    active: dev
+   
+    
+  autoconfigure:
+    exclude:  com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure # 去除druid配置
+      
+  mvc:
+    servlet:
+      path: /
+#    static-path-pattern: /**
+   
+    view:
+      prefix: /templates/
+      suffix: .ftl     
+      
+               
+  freemarker:
+    cache: false
+    charset: UTF-8
+    allow-request-override: false
+    check-template-location: true
+    content-type: text/html; charset=utf-8
+    expose-request-attributes: true
+    expose-session-attributes: true
+    suffix: .ftl
+    template-loader-path:
+    - classpath:/templates/
+    request-context-attribute: request
+    
+  main:
+    allow-circular-references: true    
+    
+mybatis:
+  mapper-locations:
+  - classpath:/mappers/*.xml  
+      
+logging:
+  config: classpath:log4j2.xml
+  level:
+    root: info
+    javax.activation: info
+    org.apache.catalina: INFO
+    org.apache.commons.beanutils.converters: INFO
+    org.apache.coyote.http11.Http11Processor: INFO
+    org.apache.http: INFO
+    org.apache.tomcat: INFO
+    org.springframework: INFO
+    com.chinamobile.cmss.bdpaas.resource.monitor: DEBUG
+    
+#web socket port
+socket-port: 9999
+
+#sso server config used by com.ucan.sso.server.util.sso.JwtUtil
+ucan:
+  sso:
+    secretKey: df10a5fd1fdf783acc77ae0d908bba32
+    issuer: ucan-admin-sso-server
+    audience: pc,androd,ios   
+    expires-unit: 0  #过期时间单位。数字范围 0~3（0：秒，1：分，2：时，3：天 ）
+    expires-at: 10   #token 过期时间，大于0的整数。expires-unit=0，expires-at=3 时表示3秒后过期，expires-unit=1时表示3分钟后过期，以此类推
+    #refreshToken相对于accessToken的过期时间增量，时间单位共用expires-unit。
+    #expires-unit=0，expires-at=3，expires-at-incr=5时，表示refreshToken 8秒后过期，以此类推。此数值必须大于0的整数
+    expires-at-incr: 1500
+    token-cookie:
+      name: utoken
+  redis:
+    host: ucan.com
+    port: 6379    
