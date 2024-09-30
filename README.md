@@ -18,7 +18,7 @@ SpringBoot + Shiro + JWT + Mysql + Redis + LayUi（及LayUi第三方插件） + 
 
 ### 单点登录原理流程图
 
-![Image text](https://gitee.com/mrcen/springboot-ucan-admin-sso/blob/master/sso-server/src/main/resources/static/imgs/sso-login.png)<br>
+![Image text](https://gitee.com/mrcen/springboot-ucan-admin-sso/raw/master/sso-server/src/main/resources/static/imgs/sso-login.png)<br>
 
 
 
