@@ -150,6 +150,7 @@ public class SsoServerController {
      * 
      * @param username
      * @param password
+     * @param fromLogout 是否是退出登录转发过来的请求: "1" 是 ，其他值 不是
      * @return
      */
     @RequestMapping("/jump")
@@ -171,11 +172,10 @@ public class SsoServerController {
                 }
             }
         }
-        // 1.验证cookie中token，如果验证成功，拼接cookie至http://www.umall.com/add?xxxx，并发起请求
-        // 2.如果验证失败，则获取该用户的refresh token，并尝试生成新的access token
-        // 3.access
-        // token生成成功，更新.ucan.com域的cookie，拼接cookie至http://www.umall.com/add?xxxx，并发起请求
-        if (token.equals("")) {// 如果token为空，则直接跳转到sso登录页面
+        // 1.验证tokenCookie中的accessToken，如果验证成功，拼接accessToken至target目标url/addToken?accessToken=accessToken，然后进行重定向
+        // 2.如果验证失败，则获取该用户的refreshToken，并尝试生成新的accessToken
+        // 3.accessToken生成成功，更新.ucan.com域的tokenCookie，拼接accessToken至target目标url/addToken?accessToken=accessToken，然后进行重定向
+        if (token.equals("")) {// 如果accessToken为空，则直接跳转到sso登录页面
             return "redirect:/toLogin?target=" + URLEncoder.encode(target, "UTF-8");
         } else {// 子系统进行logOut操作之后跳转的 /toLogin 会被拦截而转发到 /pass ，最后会转发到 SSO 的/jump
             if (!Objects.isNull(fromLogout) && fromLogout.equals("1")) {
@@ -190,20 +190,20 @@ public class SsoServerController {
                 port = DomainUtil.getPort(target);
             }
             try {
-                // 验证token
+                // 验证accessToken
                 verifyJWT = jwtUtil.verifyJWT(token);
             } catch (CustomException e) {
                 log.error(e.getMessage());
-                // 旧token验证失败，尝试去获取对应用户的refresh token，并尝试生成新的access token
-                // 从旧token中解析userName
+                // 旧accessToken验证失败，尝试去获取对应用户的refreshToken，并尝试生成新的accessToken
+                // 从旧accessToken中解析userName
                 JSONObject payload = JwtBase64Util.getPayload(token);
                 String userName = payload.getString("userName");
-                // 获取对应用户的refresh token
+                // 获取对应用户的refreshToken
                 Cache<String, String> refreshTokenCache = redisCacheManager.getCache("refreshToken");
                 String refreshToken = refreshTokenCache.get(userName);
                 String newAccessToken = "";
                 try {
-                    // 成功生成新的access token，更新sso系统的cookie，拼接cookie，重定向
+                    // 成功生成新的accessToken，更新sso系统的tokenCookie，拼接accessToken，重定向
                     newAccessToken = jwtUtil.updateAccessToken(refreshToken);
                     tokenCookieManager.setTokenCookie(newAccessToken, 86400, request, response);
                     String redirectUrl = protocol + "://" + rootDomain + (port != -1 ? (":" + port) : "")
@@ -216,24 +216,24 @@ public class SsoServerController {
                 }
             }
 
-            if (verifyJWT) {// 旧的token验证成功，拼接cookie，重定向
+            if (verifyJWT) {// 旧的accessToken验证成功，拼接accessToken，重定向
                 String redirectUrl = protocol + "://" + rootDomain + (port != -1 ? (":" + port) : "")
                         + "/addToken?accessToken=" + token + "&target="
                         + URLEncoder.encode(protocol + "://" + rootDomain + (port != -1 ? (":" + port) : ""), "UTF-8");
                 return "redirect:" + redirectUrl;
-            } else {// 旧token验证失败，尝试去获取对应用户的refresh token，并尝试生成新的access token
-                // 从旧token中解析userName
+            } else {// 旧accessToken验证失败，尝试去获取对应用户的refreshToken，并尝试生成新的accessToken
+                // 从旧accessToken中解析userName
                 JSONObject payload = JwtBase64Util.getPayload(token);
                 String userName = payload.getString("userName");
-                // 获取对应用户的refresh token
+                // 获取对应用户的refreshToken
                 Cache<String, String> refreshTokenCache = redisCacheManager.getCache("refreshToken");
                 String refreshToken = refreshTokenCache.get(userName);
                 String newAccessToken = "";
-                try {// 成功生成新的access token，更新sso系统的cookie，拼接cookie，重定向
+                try {// 成功生成新的accessToken，更新sso系统的tokenCookie，拼接accessToken，重定向
                     newAccessToken = jwtUtil.updateAccessToken(refreshToken);
                     tokenCookieManager.setTokenCookie(newAccessToken, 86400, request, response);
                     String redirectUrl = protocol + "://" + rootDomain + (port != -1 ? (":" + port) : "")
-                            + "/addToken?utoken=" + newAccessToken + "&target=" + URLEncoder
+                            + "/addToken?accessToken=" + newAccessToken + "&target=" + URLEncoder
                                     .encode(protocol + "://" + rootDomain + (port != -1 ? (":" + port) : ""), "UTF-8");
                     return "redirect:" + redirectUrl;
                 } catch (CustomException e) {
