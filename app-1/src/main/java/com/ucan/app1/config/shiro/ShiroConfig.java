@@ -29,7 +29,6 @@ import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.aop.support.StaticMethodMatcherPointcutAdvisor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,20 +62,13 @@ public class ShiroConfig {
      */
     @Value("${ucan.token-cookie.max-age}")
     private int tokenCookieMaxAge;
-//    @Bean
-//    public EhCacheManager ehCacheManager(EhCacheManagerFactoryBean ehcacheManagerFactory) {
-//        EhCacheManager ehCacheManager = new EhCacheManager();
-//        ehCacheManager.setCacheManager(ehcacheManagerFactory.getObject());
-//        return ehCacheManager;
-//    }
-//
-//    @Bean
-//    public EhCacheManagerFactoryBean ehcacheManagerFactory() {
-//        EhCacheManagerFactoryBean ehCacheManagerFactoryBean = new EhCacheManagerFactoryBean();
-//        ehCacheManagerFactoryBean.setShared(true);
-//        return ehCacheManagerFactoryBean;
-//    }
 
+    /**
+     * redis缓存管理器
+     * 
+     * @param jedis
+     * @return
+     */
     @Bean("redisCacheManager")
     public CacheManager redisCacheManager(JedisPooled jedis) {
         RedisCacheManager cacheManager = new RedisCacheManager();
@@ -253,13 +245,18 @@ public class ShiroConfig {
         advisorAutoProxyCreator.setProxyTargetClass(true);
         return advisorAutoProxyCreator;
     }
-/**
- * 通常 Advisor = Advice (作用在连接点的具体动作)  + Pointcut (相当于一个Filter，绝对Advice作用在那些连接点上)，<br>
- * 但AuthorizationAttributeSourceAdvisor 继承 StaticMethodMatcherPointcutAdvisor，可使用静态Point，可以通过<br>
- * 目标方法的某些注解等条件判断是否符合代理。Advice的设置可以查看 AuthorizationAttributeSourceAdvisor的无参构造进行了解。
- * @param securityManager
- * @return
- */
+
+    /**
+     * 通常 Advisor = Advice (作用在连接点的具体动作) + Pointcut
+     * (相当于一个Filter，绝对Advice作用在那些连接点上)，<br>
+     * 但AuthorizationAttributeSourceAdvisor 继承
+     * StaticMethodMatcherPointcutAdvisor，可使用静态Point，可以通过<br>
+     * 目标方法的某些注解等条件判断是否符合代理。Advice的设置可以查看
+     * AuthorizationAttributeSourceAdvisor的无参构造进行了解。
+     * 
+     * @param securityManager
+     * @return
+     */
     @Bean
     public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(
             @Qualifier("securityManager") SecurityManager securityManager) {
@@ -267,5 +264,19 @@ public class ShiroConfig {
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
+
+//  @Bean
+//  public EhCacheManager ehCacheManager(EhCacheManagerFactoryBean ehcacheManagerFactory) {
+//      EhCacheManager ehCacheManager = new EhCacheManager();
+//      ehCacheManager.setCacheManager(ehcacheManagerFactory.getObject());
+//      return ehCacheManager;
+//  }
+//
+//  @Bean
+//  public EhCacheManagerFactoryBean ehcacheManagerFactory() {
+//      EhCacheManagerFactoryBean ehCacheManagerFactoryBean = new EhCacheManagerFactoryBean();
+//      ehCacheManagerFactoryBean.setShared(true);
+//      return ehCacheManagerFactoryBean;
+//  }
 
 }

@@ -50,12 +50,6 @@ public class JwtRealm extends AuthorizingRealm {
     @Autowired
     private JwtTokenUtil tokenUtil;
     /**
-     * 远程SSO token校验 接口地址
-     */
-    @Value("${ucan.sso.server.verify}")
-    private String ssoTokenVerifyUrl;
-
-    /**
      * token 认证
      */
     @Override

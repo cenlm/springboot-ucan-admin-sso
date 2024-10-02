@@ -1,11 +1,12 @@
 package com.ucan.sso.server.shiro;
 
 /**
- * @Description: 常见静态资源后缀名
+ * @Description: 常见静态资源后缀名（没用到）
  * @author liming.cen
  * @date 2024-07-13 21:00:01
  * 
  */
+@Deprecated
 public enum ResourceSuffix {
 
     HTML(".html"), HTM(".htm"), CSS(".css"), JS(".js"), SVG(".svg"), ICO(".ico"), JPG(".jpg"), GIF(".gif"),

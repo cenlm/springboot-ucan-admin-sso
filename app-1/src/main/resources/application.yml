@@ -66,11 +66,13 @@ socket-port: 9998
 #远程SSO认证服务业务接口地址
 ucan:
   sso:
-    server:
-      toLogin: http://login.ucan.com/toLogin  #sso系统的登录页面地址,这里的域名要跟pass.ftl中的window.location.href配置中的域名一致
-      login: http://login.ucan.com/login   #登录验证与jwt token生成
-      verify: http://login.ucan.com/verify  #jwt token验证
-      updateToken: http://login.ucan.com/updateToken  #客户端token过期，通过发送refresh token到sso服务器进行校验来生成新的token
+    server: 
+      host: http://login.ucan.com #sso系统主机域名
+      port: 80                    #sso系统端口号
+      toLogin: ${ucan.sso.server.host}:${ucan.sso.server.port}/toLogin  #sso系统的登录页面地址,这里的域名要跟pass.ftl中的window.location.href配置中的域名一致
+      login: ${ucan.sso.server.host}:${ucan.sso.server.port}/login   #登录验证与jwt token生成
+      verify: ${ucan.sso.server.host}:${ucan.sso.server.port}/verify  #jwt token验证
+      updateToken: ${ucan.sso.server.host}:${ucan.sso.server.port}/updateToken  #客户端token过期，通过发送refresh token到sso服务器进行校验来生成新的token
   redis:
     host: ucan.com
     port: 6379

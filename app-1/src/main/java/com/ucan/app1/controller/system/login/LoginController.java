@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Objects;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,6 +15,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -42,23 +44,6 @@ public class LoginController {
 
     @Autowired
     private TokenCookieManager tokenCookieManager;
-    /**
-     * sso认证系统的登录页面地址
-     */
-    @Value("${ucan.sso.server.toLogin}")
-    private String sso2LoginUrl;
-
-    /**
-     * 远程SSO登录认证与token生成 接口地址
-     */
-    @Value("${ucan.sso.server.login}")
-    private String ssoLoginUrl;
-
-    /**
-     * 远程SSO token校验 接口地址
-     */
-    @Value("${ucan.sso.server.verify}")
-    private String ssoTokenVerifyUrl;
 
     /**
      * 系统默认的退出行为只会删掉浏览器的rememberMe Cookie和移除掉session中纪录的principal和认证状态，<br>
@@ -76,28 +61,16 @@ public class LoginController {
         currentUser.logout();
         return "redirect:/toLogin";
     }
-//    已交由JwtAuthenticatingFilter 进行处理
-//    @RequestMapping("/toLogin")
-//    public String toLogin(HttpServletRequest request, HttpServletResponse response)
-//            throws UnsupportedEncodingException {
-//        String protocol = request.getScheme();
-//        String domain = request.getServerName();
-//        int port = request.getServerPort();
-//        String url = "";
-//        try {
-//            if (port == -1) {
-//
-//                url = sso2LoginUrl + "?target=" + URLEncoder.encode(protocol + "://" + domain, "UTF-8");
-//
-//            } else {
-//                url = sso2LoginUrl + "?target=" + URLEncoder.encode(protocol + "://" + domain + ":" + port, "UTF-8");
-//            }
-//        } catch (UnsupportedEncodingException e) {
-//            throw new UnsupportedEncodingException("URL不支持UTF-8编码");
-//        }
-//        return "redirect:" + url;
-//    }
 
+    /**
+     * 设置当前域名下的tokenCookie
+     * 
+     * @param accessToken
+     * @param target
+     * @param request
+     * @param response
+     * @return
+     */
     @RequestMapping("/addToken")
     public String addToken(@RequestParam("accessToken") String accessToken,
             @RequestParam(name = "target", required = false) String target, HttpServletRequest request,
@@ -110,7 +83,11 @@ public class LoginController {
     }
 
     @RequestMapping("/pass")
-    public String toPassPage() {
+    public String toPassPage(Model model, HttpServletRequest request) {
+        ServletContext servletContext = request.getServletContext();
+        // ssoServerUrl 在SsoServerUrlSetter中被设置到ServletContext属性中
+        String ssoServerUrl = (String) servletContext.getAttribute("ssoServerUrl");
+        model.addAttribute("ssoServerUrl", ssoServerUrl);
         return "pass";
     }
 

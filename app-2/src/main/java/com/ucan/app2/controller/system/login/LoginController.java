@@ -2,6 +2,7 @@ package com.ucan.app2.controller.system.login;
 
 import java.util.Objects;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,6 +12,7 @@ import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -66,7 +68,7 @@ public class LoginController {
         // 将数据添加到 RedirectAttributes 对象中
         redirectAttributes.addFlashAttribute("isLogout", "yes");
         Subject currentUser = SecurityUtils.getSubject();
-      //删除浏览器的tokenCookie
+        // 删除浏览器的tokenCookie
         tokenCookieManager.setTokenCookie("del", 0, request, response);
         currentUser.logout();
         return "redirect:/toLogin?fromLogout=1";
@@ -84,7 +86,11 @@ public class LoginController {
     }
 
     @RequestMapping("/pass")
-    public String toPassPage() {
+    public String toPassPage(Model model, HttpServletRequest request) {
+        ServletContext servletContext = request.getServletContext();
+        // ssoServerUrl 在SsoServerUrlSetter中被设置到ServletContext属性中
+        String ssoServerUrl = (String) servletContext.getAttribute("ssoServerUrl");
+        model.addAttribute("ssoServerUrl", ssoServerUrl);
         return "pass";
     }
 //  已交由JwtAuthenticatingFilter 进行处理

@@ -7,9 +7,8 @@
 <title>处理中...</title>
 </head>
 <body>
-	<#assign contextPath="${request.contextPath}" />
 
-	
+	<input type="hidden" id="ssoServerUrlInput" value="${ssoServerUrl}">
 
 	<script src="js/jquery-3.6.3.min.js"></script>
 
@@ -30,7 +29,8 @@
                         
                         const urlParams = new URLSearchParams(window.location.search);
                         const fromLogout = urlParams.get('fromLogout');
-                        window.location.href = "http://login.ucan.com/jump?target="+encodeURIComponent(url)+"&fromLogout="+fromLogout;
+                        const ssoServerUrl = document.getElementById('ssoServerUrlInput').value;
+                        window.location.href = ssoServerUrl + "/jump?target="+encodeURIComponent(url)+"&fromLogout="+fromLogout;
 	   /**
  * 获取协议
  */
