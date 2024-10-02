@@ -63,7 +63,14 @@ public class SsoServerController {
     }
 
     /**
-     * 单点登录，JWT token生成
+     * 单点登录，JWT accessToken、refreshToken的生成，accessToken的转发<br>
+     * 注意：当所有系统都在同一台主机上运行时，为避免子系统访问失败，请不要直接通过
+     * http://login.ucan.com/toLogin访问登录页面！<br>
+     * 当缺失target参数时，SSO系统默认会解析当前页面地址 http://login.ucan.com/toLogin
+     * 的协议、根域名、端口，并将其拼接成http://ucan.com作为 target参数进行传递，<br>
+     * 如果子系统的域名为 http://ucan.com ，端口为80，则会导致子系统端口号与sso系统端口冲突；<br>
+     * 如果子系统端口号不为80，则又会导致访问失败。<br>
+     * 所以强烈建议在单独的主机上运行子系统和SSO认证系统
      * 
      * @param username
      * @param password
@@ -124,6 +131,19 @@ public class SsoServerController {
                 } else {
                     successTo = protocol + "://" + rootDomain + ":" + port + "/addToken?accessToken=" + accessToken;
                 }
+            } else {// SSO系统登录页面 http://xxx.com/toLogin （请看方法详细注释）
+                    // 没有传入target参数时，直接获取当前页面的url来解析请求协议、根域名、端口来作为target
+                String protocol1 = request.getScheme();
+                String serverName = request.getServerName();
+                int port1 = request.getServerPort();
+                String currentRequestUrl = protocol1 + "://" + serverName + ":" + port1;
+                rootDomain = DomainUtil.getRootDomain(currentRequestUrl);// 根域名
+                // successTo: 设置目标token cookie的域
+                if (port1 == 80) {// 端口号为 80，可以省略不写
+                    successTo = protocol1 + "://" + rootDomain + "/addToken?accessToken=" + accessToken;
+                } else {
+                    successTo = protocol1 + "://" + rootDomain + ":" + port1 + "/addToken?accessToken=" + accessToken;
+                }
             }
             // 这里的cookie在 /jump 中用到
             tokenCookieManager.setTokenCookie(accessToken, 86400, request, response);
@@ -133,7 +153,7 @@ public class SsoServerController {
             refreshTokenCache.put(username, refreshToken);
 
             msg = JSON.toJSONString(Response.respCustomMsgWithData(MsgEnum.SUCCESS.getCode(), "登录成功！", successTo));
-            //登录成功，解禁登录限制
+            // 登录成功，解禁登录限制
             limitLoginRecorder.unban2Login(username);
         } else {
             String result = limitLoginRecorder.increaseFailLoginCounts(username);

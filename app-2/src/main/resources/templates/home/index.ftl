@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>APP2</title>
+<title>子系统 APP-1</title>
 <link rel="stylesheet" href="js/layui/css/layui.css">
 <link rel="stylesheet" href="css/index.css">
 <style type="text/css">
@@ -52,7 +52,7 @@ body {
 		<div class="layui-row top-nav">
 			<!-- logo或文字 -->
 			<div class="layui-col-md2 layui-col-lg2">
-				<a href="javascript:;" class="ucan_board" style="color: #ffffff;">Ucan权限管理系统</a>
+				<a href="javascript:;" class="ucan_board" style="color: #ffffff;">子系统 APP-1</a>
 			</div>
 			<!-- 其他导航信息 -->
 			<div class=" layui-col-md3 layui-col-lg3 "></div>
@@ -204,17 +204,14 @@ body {
 	                        }
                         }
                         kickout_check();
-
-                        window.onload = function() {
-	                        let referrer = document.referrer;
-
-	                        function handleMessage(event) {
-		                        if (event.origin !== "http://192.168.3.100:8080")
-			                        return;
-		                        // 处理接收到的消息
-		                        console.log("接收到消息:" , event.data);
-	                        }
-                        }
+                        
+                      //监听来自嵌套层iframe的消息
+                        window.addEventListener('message' , function(event) {
+                            if (event.data === 'refresh') {
+                                //刷新页面
+                                location.reload();
+                            }
+                        });
 		</script>
 </body>
 </html>

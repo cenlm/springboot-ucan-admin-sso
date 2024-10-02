@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport"
 	content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>APP1</title>
+<title>子系统 APP-2</title>
 <link rel="stylesheet" href="js/layui/css/layui.css">
 <link rel="stylesheet" href="css/index.css">
 <style type="text/css">
@@ -52,7 +52,8 @@ body {
 		<div class="layui-row top-nav">
 			<!-- logo或文字 -->
 			<div class="layui-col-md2 layui-col-lg2">
-				<a href="javascript:;" class="ucan_board" style="color: #ffffff;">Ucan权限管理系统</a>
+				<a href="javascript:;" class="ucan_board" style="color: #ffffff;">子系统
+					APP-2</a>
 			</div>
 			<!-- 其他导航信息 -->
 			<div class=" layui-col-md3 layui-col-lg3 "></div>
@@ -205,53 +206,13 @@ body {
                         }
                         kickout_check();
 
-                        window.onload = function() {
-	                        let referrer = document.referrer;
-
-	                        function handleMessage(event) {
-		                        if (event.origin !== "http://192.168.3.100:8080")
-			                        return;
-		                        // 处理接收到的消息
-		                        console.log("接收到消息:" , event.data);
+                        //监听来自嵌套层iframe的消息
+                        window.addEventListener('message' , function(event) {
+	                        if (event.data === 'refresh') {
+		                        //刷新页面
+		                        location.reload();
 	                        }
-	                      
-	                       /*  $.ajax({
-	                                type : "POST" ,
-	                                url : contextPath + "/verify" ,
-	                                data : {
-		                                "token" : token
-	                                } ,
-	                                dataType : "json" ,
-	                                success : function(result) {
-		                                if (result.code == 0) {
-			                                var newAccessToken = result.data;
-			                                if (newAccessToken != "" && newAccessToken != null) {
-				                                console.log("旧token失效，已生成新token：" + newAccessToken);
-				                                //认证成功且toke成功返回，将token保存到本地
-				                                localStorage.setItem('token' , newAccessToken);
-
-			                                }
-			                                console.log('token验证成功，可以继续访问！');
-		                                } else if (result.code == 2) {//token校验失败
-			                                layer.msg(result.msg , {
-			                                        icon : 5 ,
-			                                        time : 3000 ,
-			                                        shade : 0.3 ,
-			                                        offset : [ $(window).height() - 480 , $(window).width() - 890 ]
-			                                });
-			                                setTimeout(function() {//退出系统
-				                                window.location.href = contextPath + "/logout";
-			                                } , 3000);
-		                                }
-	                                } ,
-	                                error : function(e) {
-		                                layer.msg("系统出现异常！" , {
-		                                        icon : 2 ,
-		                                        offset : [ $(window).height() - 480 , $(window).width() - 890 ]
-		                                });
-	                                }
-	                        }); */
-                        }
+                        });
 		</script>
 </body>
 </html>

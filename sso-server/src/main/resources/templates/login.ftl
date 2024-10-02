@@ -138,10 +138,10 @@ input[type='password'] {
 								<div class="layui-input-block">
 									<input type="password" name="password" required
 										lay-verify="required" placeholder="密码" autocomplete="off"
-										lay-affix="eye" class="layui-input" >
+										lay-affix="eye" class="layui-input">
 								</div>
 							</div>
-						<!-- 	<div class="layui-form-item">
+							<!-- 	<div class="layui-form-item">
 								<div class="layui-input-inline" id="rememberMe">
 									<input type="checkbox" name="rememberMe" value="true"
 										lay-skin="primary" title="记住我？">
@@ -162,17 +162,20 @@ input[type='password'] {
 	</div>
 	<script src="js/layui/layui.js"></script>
 	<script src="js/jquery-3.6.3.min.js"></script>
+	<script src="js/utils/url-parser.js"></script>
 	<script src="js/login/login.js"></script>
 	<script type="text/javascript">
 		var contextPath = "${contextPath}";
                 window.onload = function() {
-                	let referrer = document.referrer;
-                        console.log(referrer);
-                        //用户退出后，如果用户继续在其他停留页面进行操作，将跳转到登录页面
-                        //或者过滤器拦截导致的页面跳转
-                        if (top != self) {
-                            top.document.location.reload();
-                        } 
+	                let referrer = document.referrer;
+	                console.log(referrer);
+	                //用户在子系统A退出后，如果用户继续在已登录的子系统B的页面进行操作，
+	                //顶层页面（子系统index.ftl页面）会自动刷新跳转到SSO登录页面
+	                if (top != self) {
+		                //由于sso系统和其他子系统之间存在跨域问题，所以顶层和嵌套层页面只能通过postMessage进行
+		                //通信来解决顶层页面不刷新的问题。
+		                top.postMessage('refresh' , '*');
+	                }
                 }
 	</script>
 </body>

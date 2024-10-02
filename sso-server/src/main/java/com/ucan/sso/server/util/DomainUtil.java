@@ -57,11 +57,6 @@ public class DomainUtil {
         return port;
     }
 
-    public static void main(String[] args) {
-        String urlStr = "http://umall.com?cross=1?yes=1724294914644";
-        int port = getPort(urlStr);
-        System.out.println(port);
-    }
     /**
      * 获取协议
      * 
@@ -79,4 +74,15 @@ public class DomainUtil {
         }
         return protocol;
     }
+
+    public static void main(String[] args) {
+        String urlStr = "http://login.ucan.com:80?cross=1?yes=1724294914644";
+        String rootDomain = getRootDomain(urlStr);
+        String protocol = getProtocol(urlStr);
+        int port = getPort(urlStr);
+        System.out.println(protocol);
+        System.out.println(rootDomain);
+        System.out.println(port);
+    }
+
 }
