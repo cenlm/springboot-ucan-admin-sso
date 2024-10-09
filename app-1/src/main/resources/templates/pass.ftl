@@ -30,6 +30,7 @@
                         const urlParams = new URLSearchParams(window.location.search);
                         const fromLogout = urlParams.get('fromLogout');
                         const ssoServerUrl = document.getElementById('ssoServerUrlInput').value;
+                        //发送请求到认证中心的 /jump ，去验证认证中心域名在当前浏览器下的tokenCookie的有效性
                         window.location.href = ssoServerUrl + "/jump?target="+encodeURIComponent(url)+"&fromLogout="+fromLogout;
 	   /**
  * 获取协议

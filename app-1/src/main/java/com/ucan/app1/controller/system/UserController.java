@@ -384,7 +384,7 @@ public class UserController {
         return jsonDataString;
     }
 
-//    @RequiresPermissions("document:read") // shiro注解测试
+//  @RequiresPermissions("document:read") // shiro注解测试
     @RequestMapping("/queryUserDetail")
     @ResponseBody
     public String queryUserDetail(User user) {

@@ -8,10 +8,8 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson2.JSONObject;
@@ -269,7 +267,7 @@ public class UserServiceImpl implements IUserService {
         }
         return msgMap;
     }
-
+//    @RequiresPermissions("document:read") 
     @Override
     public List<User> queryUserDetail(User user) {
         String userId = user.getUserId();

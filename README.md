@@ -24,6 +24,14 @@ SpringBoot + Shiro + JWT + Mysql + Redis + LayUi（及LayUi第三方插件） + 
 
 [聊聊阿里淘宝SSO跨域登录过程](https://youngzhang08.github.io/2018/08/08/%E8%81%8A%E8%81%8A%E9%98%BF%E9%87%8C%E6%B7%98%E5%AE%9DSSO%E8%B7%A8%E5%9F%9F%E7%99%BB%E5%BD%95%E8%BF%87%E7%A8%8B/)<br>
 
+#### 单点登录模块主要涉及的类/页面
+
+**app-1&app-2：** ShiroConfig、JwtAuthenticatingFilter、JwtToken、LoginController、RedisCacheManager、RedisCache、RedisCacheSessionDAO、JedisConfig、pass.ftl
+
+**sso-server：**
+ShiroConfig、JwtAuthenticatingFilter、SsoServerController、RedisCacheManager、RedisCache、RedisCacheSessionDAO、JedisConfig、pass.ftl
+
+
 ### 功能描述
 
 **组织架构、职位、用户、角色、权限管理功能概述**<br>
